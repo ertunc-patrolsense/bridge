@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' ws://localhost:* ws://127.0.0.1:*; img-src 'self' data:; style-src 'self' 'unsafe-inline';" />
+  <title>Patrol Sense — IP Camera Scanner</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Boot splash (logo pulse) shown while the gate is decided -->
+  <div id="boot" class="app-boot">
+    <img src="patrol-LOGO.png" alt="Patrol Sense" class="app-boot-logo" />
+    <span class="app-boot-text">Starting Patrol Sense…</span>
+  </div>
+
+  <!-- First-run onboarding wizard (built by renderer.js) -->
+  <div id="onboarding" hidden></div>
+
+  <!-- App-lock screen (built by renderer.js) -->
+  <div id="lock" hidden></div>
+
+  <!-- Main application shell (built by renderer.js) -->
+  <div id="app" class="app-root" hidden></div>
+
+  <!-- Modal host (live view, frames gallery, find password) -->
+  <div id="modalRoot"></div>
+
+  <script src="jsmpeg.min.js"></script>
+  <script src="motion.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
