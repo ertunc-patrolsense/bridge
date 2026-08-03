@@ -1,18 +1,27 @@
-# IP Camera Scanner (Electron)
+# PatrolSense Bridge
 
-Desktop app that scans your local network for IP cameras (Hikvision / ONVIF)
-and plays their RTSP stream in a window.
+Desktop bridge for **PatrolSense**. Discovers CCTV / IP cameras on the local
+network, pulls their live streams, and sends frames and footage onward to the
+PatrolSense server.
 
-## How it works
+## What it does
 
-- **Discovery** — two techniques merged by IP:
-  - TCP port scan of your `/24` subnet for camera ports (`554` RTSP, `80`,
-    `8000` Hikvision SDK, `443`, `2020`).
-  - ONVIF **WS-Discovery** (UDP multicast) — most cameras, including
-    Hikvision, answer with their device address and model.
-- **Streaming** — RTSP can't play directly in a browser/Chromium. The app
-  spawns a bundled **ffmpeg** (`ffmpeg-static`) that transcodes the RTSP feed
-  to MPEG1 over a local WebSocket, which **JSMpeg** renders onto a `<canvas>`.
+- **Discover cameras** — scans your local subnet for CCTV devices (Hikvision /
+  ONVIF) via TCP port scan and ONVIF WS-Discovery.
+- **Ingest streams** — connects to each camera’s RTSP feed, transcodes with
+  bundled ffmpeg, and plays it locally for monitoring.
+- **Bridge to server** — captures frames (interval or motion-triggered) and
+  forwards them to the PatrolSense server so the cloud side can monitor and
+  analyze the site.
+- **Secure locally** — PIN lock, encrypted credentials (OS keychain), and an
+  organization profile set up during onboarding.
+
+## How streaming works
+
+RTSP can’t play directly in Chromium. The bridge spawns **ffmpeg**
+(`ffmpeg-static`) to transcode each RTSP feed to MPEG1 over a local WebSocket,
+which **JSMpeg** renders onto a `<canvas>`. Those same feeds feed the capture
+pipeline that sends frames to the server.
 
 ## Run
 
@@ -24,43 +33,30 @@ npm start
 
 ## Using it
 
-1. Click **Scan network**. Found cameras appear on the left with badges
-   (RTSP / ONVIF / Hikvision).
-2. Click a camera — its IP fills the form. Enter the **username** and
-   **password** (Hikvision default user is `admin`; password is whatever you
-   set when activating the camera).
-3. Click **Connect & play**.
-
-### Saving cameras & grid view
-
-- Fill the form (optionally set a **Name**) and click **Save**. The camera is
-  stored under **Saved cameras** on the left. Passwords are encrypted at rest
-  with the OS keychain (Electron `safeStorage`) and are never written in
-  plaintext.
-- Each saved camera has **▶** (play in single view) and **✕** (delete).
-- Switch to the **Grid** tab (top right) and click **Play all** to view every
-  saved camera at once — each tile is an independent RTSP→ffmpeg→WebSocket
-  stream. **Stop all** tears them down.
+1. Complete onboarding (organization, PIN).
+2. Add cameras via **Auto Scan** or **Manual Entry**.
+3. Open a feed, tune motion / auto-capture, and let the bridge keep streams
+   alive and push frames to PatrolSense.
 
 ### Hikvision RTSP URLs
 
-The app builds these for you, but for reference:
+Built automatically; for reference:
 
 ```
 Main stream:  rtsp://user:pass@IP:554/Streaming/Channels/101
 Sub  stream:  rtsp://user:pass@IP:554/Streaming/Channels/102
 ```
 
-Channel `N` → `N01` (main) / `N02` (sub). For an NVR, use the channel number
-of the camera. Use **Advanced → Override RTSP URL** for non-standard paths.
+Channel `N` → `N01` (main) / `N02` (sub). For an NVR, use the camera’s channel
+number. Use an RTSP URL override for non-standard paths.
 
 ## Notes / troubleshooting
 
 - **401 / Unauthorized** → wrong username or password.
 - **Connection refused / timed out** → camera not reachable, wrong IP, or RTSP
-  disabled on the camera (enable it in the camera's web UI under
-  *Network → Advanced → Integration Protocol / RTSP*).
-- The scan only covers your own subnet. Scanning networks you don't own or
+  disabled on the camera (enable it under *Network → Advanced → Integration
+  Protocol / RTSP*).
+- The scan only covers your own subnet. Scanning networks you don’t own or
   have permission to test may be against the law — use responsibly.
 - ONVIF discovery uses UDP multicast; some Wi-Fi networks block it. The port
   scan still finds cameras in that case.

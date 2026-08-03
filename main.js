@@ -1,5 +1,5 @@
 // main.js — Electron main process.
-// Owns the network scan and the RTSP→WebSocket video bridge.
+// Owns the network scan and the RTSP→WebSocket video bridge for PatrolSense.
 
 const path = require('path');
 const { app, BrowserWindow, ipcMain } = require('electron');
@@ -20,7 +20,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     backgroundColor: '#000000',
-    title: 'Patrol Sense — IP Camera Scanner',
+    title: 'PatrolSense Bridge',
     autoHideMenuBar: true,
     // Drop the native OS title bar for a seamless all-black look, keeping the
     // window controls (min/max/close). The renderer draws its own titlebar.

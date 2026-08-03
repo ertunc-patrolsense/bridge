@@ -1,7 +1,7 @@
 {
-  "name": "ipcam-scanner",
+  "name": "patrolsense-bridge",
   "version": "1.0.0",
-  "description": "Scan the local network for IP cameras (Hikvision/ONVIF) and view their RTSP stream",
+  "description": "PatrolSense bridge — discover CCTV cameras, ingest RTSP streams, and send frames to the PatrolSense server",
   "main": "main.js",
   "scripts": {
     "start": "electron ."

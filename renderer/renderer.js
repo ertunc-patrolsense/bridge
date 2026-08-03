@@ -1,4 +1,4 @@
-// renderer.js — Patrol Sense IP Camera Scanner UI.
+// renderer.js — PatrolSense Bridge UI.
 // A screen-router over: boot → onboarding → lock → app (dashboard / add-camera
 // wizard / live view + frame capture / frames gallery). Talks to the main
 // process through window.api.
